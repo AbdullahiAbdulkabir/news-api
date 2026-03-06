@@ -41,12 +41,12 @@ abstract class NewsAbstract implements NewsInterface
 
 
             if (!$response->successful()) {
-                throw new HttpException(message: "Unable to load news", data: ["error" => $response->json()]);
+                throw new HttpException(message: "Unable to load news {$this->__toString()}", data: ["error" => $response->json()]);
             }
 
             return $response->json();
         } catch (\Throwable $throwable) {
-            Log::error("Unable to load news {$this->__toString()}", ["exception" => $throwable]);
+            Log::error("An error occurred while load news {$this->__toString()}", ["exception" => $throwable]);
             return [];
         }
 
