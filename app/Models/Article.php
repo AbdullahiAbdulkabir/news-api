@@ -10,6 +10,7 @@ class Article extends Model
     protected $fillable = [
         'title',
         'description',
+        'content',
         'source',
         'image_url',
         'external_url',
