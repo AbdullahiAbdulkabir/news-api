@@ -1,6 +1,6 @@
 ## News aggregator
 
-This repo contains the implementation of a news aggregator . I am assuming each achievement unlocks a new badge
+This repo contains the implementation of a news aggregator.
 
 ## Backend Installation & Requirement
 Clone the repository and install dependencies 
@@ -8,6 +8,10 @@ Clone the repository and install dependencies
 - laravel (requires 11):
 - PHP (requires 8.2):
 
+```bash
+# cd to the file
+cd news-api
+```
 ```bash
 # Install PHP dependencies
 composer install

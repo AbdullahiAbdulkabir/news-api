@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Services\NewsSources;
-use App\Services\Sources\NewsApiSource;
 use Illuminate\Console\Command;
 
 class FetchNewsCommand extends Command
@@ -25,9 +24,8 @@ class FetchNewsCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(NewsSources $source)
     {
-        $source = new NewsSources(new NewsApiSource());
         $this->info('Fetching News Feed...');
         $source->sync();
         $this->info('News fetched Successful');

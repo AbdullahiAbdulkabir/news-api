@@ -10,15 +10,18 @@ use Illuminate\Support\Facades\DB;
 
 readonly class NewsSources
 {
-    public function __construct(private NewsAbstract $newsAbstract)
+    public function __construct(protected Collection $sources)
     {
 
     }
 
     public function sync(): void
     {
-        $data = $this->newsAbstract->fetchArticles();
-        $this->handleArticleSaving($data);
+        $this->sources->each(function(NewsAbstract $source) {
+            $data = $source->fetchArticles();
+            $this->handleArticleSaving($data);
+        });
+
     }
 
     public function handleArticleSaving(Collection $data): void
