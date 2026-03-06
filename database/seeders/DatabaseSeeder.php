@@ -18,16 +18,19 @@ class DatabaseSeeder extends Seeder
         //will be used to set user preferences
         $user = User::firstWhere('email', 'test@example.com');
 
-        if ($user->doesntExist()) {
+        if (!$user) {
             $user = User::factory()->create([
                 'name' => 'Test User',
                 'email' => 'test@example.com',
             ]);
         }
 
-        $user->preferences()->create([
-            'preference_type' => Category::first(['name'])?->name,
-        ]);
+        $category = Category::first(['name']);
+        if ($category) {
+            $user->preferences()->create([
+                'preference_type' => $category->name,
+            ]);
+        }
 
 
     }

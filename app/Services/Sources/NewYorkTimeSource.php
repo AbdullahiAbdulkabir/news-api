@@ -44,10 +44,10 @@ class NewYorkTimeSource extends NewsAbstract
             content: Arr::get($data, 'abstract'),
             author: Arr::get($data, 'byline.original'),
             category: Arr::get($data, 'section_name'),
-            source: Arr::get($data, 'source'),
-            imageUrl: Arr::get($data, 'multimedia.default.url'),
+            source: $this->__toString(),
+            image_url: Arr::get($data, 'multimedia.default.url'),
             url: Arr::get($data, 'web_url'),
-            publishedAt: Carbon::parse(Arr::get($data, 'pub_date')),
+            published_at: Carbon::parse(Arr::get($data, 'pub_date')),
         );
     }
 }

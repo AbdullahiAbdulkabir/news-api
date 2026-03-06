@@ -45,10 +45,10 @@ class GuardianSource extends NewsAbstract
             content: Arr::get($data, 'content'),
             author: Arr::get($data, 'author'),
             category: Arr::get($data, 'sectionId'),
-            source: Arr::get($data, 'source.name', $this->__toString()),
-            imageUrl: Arr::get($data, 'urlToImage'),
+            source: $this->__toString(),
+            image_url: Arr::get($data, 'urlToImage'),
             url: Arr::get($data, 'webUrl'),
-            publishedAt: Carbon::parse(Arr::get($data, 'webPublicationDate')),
+            published_at: Carbon::parse(Arr::get($data, 'webPublicationDate')),
         );
     }
 }

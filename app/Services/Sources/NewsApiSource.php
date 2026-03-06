@@ -45,10 +45,10 @@ class NewsApiSource extends NewsAbstract
             content: Arr::get($data, 'content'),
             author: Arr::get($data, 'author'),
             category: Arr::get($data, 'category'),
-            source: Arr::get($data, 'source.name'),
-            imageUrl: Arr::get($data, 'urlToImage'),
+            source: $this->__toString(),
+            image_url: Arr::get($data, 'urlToImage'),
             url: Arr::get($data, 'url'),
-            publishedAt: Carbon::parse(Arr::get($data, 'publishedAt')),
+            published_at: Carbon::parse(Arr::get($data, 'publishedAt')),
         );
     }
 }

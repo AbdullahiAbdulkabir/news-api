@@ -16,9 +16,9 @@ readonly class ArticleDTO
         public ?string $author,
         public ?string $category,
         public string  $source,
-        public ?string $imageUrl,
+        public ?string $image_url,
         public ?string $url,
-        public ?Carbon $publishedAt,
+        public ?Carbon $published_at,
     )
     {
     }
