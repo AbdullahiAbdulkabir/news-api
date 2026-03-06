@@ -32,6 +32,7 @@ readonly class NewsSources
     {
         DB::transaction(function () use ($data) {
             $this->handleCategorySaving($data);
+            $this->handleAuthorsSaving($data);
             $data->each(function ($article) {
                 $article = Article::query()->updateOrCreate([
                     'external_url' => $article->url,
@@ -60,5 +61,10 @@ readonly class NewsSources
         }
 
         return $categories;
+    }
+
+    public function handleAuthorsSaving(Collection $articles): void
+    {
+
     }
 }
