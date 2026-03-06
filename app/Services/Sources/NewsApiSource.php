@@ -21,7 +21,7 @@ class NewsApiSource extends NewsAbstract
 
     public function __toString(): string
     {
-        return 'News Api';
+        return 'NewsAPI';
     }
 
     private function fetch(string $url): array
@@ -32,6 +32,12 @@ class NewsApiSource extends NewsAbstract
         ], $url);
     }
 
+    public function sources(): Collection
+    {
+        $data = $this->fetch('top-headlines/sources');
+        return collect($data);
+    }
+
     public function sourceConfig(): array
     {
         return config('news.newsapi');
@@ -39,13 +45,15 @@ class NewsApiSource extends NewsAbstract
 
     public function map(array $data): ArticleDTO
     {
+        $sources = $this->sources();
+
         return new ArticleDTO(
             title: Arr::get($data, 'title'),
             description: Arr::get($data, 'description'),
             content: Arr::get($data, 'content'),
             author: Arr::get($data, 'author'),
-            category: Arr::get($data, 'category'),
-            source: $this->__toString(),
+            category: Arr::get($sources->firstWhere('name', Arr::get($data, 'source.name')),'category'),
+            source: $this->__toString(). "- " .Arr::get($data, 'source.name'),
             image_url: Arr::get($data, 'urlToImage'),
             url: Arr::get($data, 'url'),
             published_at: Carbon::parse(Arr::get($data, 'publishedAt')),

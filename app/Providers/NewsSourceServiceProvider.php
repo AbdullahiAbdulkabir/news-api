@@ -27,8 +27,8 @@ class NewsSourceServiceProvider extends ServiceProvider
             return new NewsSources(
                 collect([
                     new NewsApiSource(),
-                    new GuardianSource(),
-                    new NewYorkTimeSource(),
+//                    new GuardianSource(),
+//                    new NewYorkTimeSource(),
                 ])
             );
         });
