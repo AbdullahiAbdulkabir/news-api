@@ -6,22 +6,16 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Get the migration connection name.
-     */
     public function getConnection(): ?string
     {
         return config('telescope.storage.database.connection');
     }
 
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         $schema = Schema::connection($this->getConnection());
 
-        $schema->create('telescope_entries', function (Blueprint $table) {
+        $schema->create('telescope_entries', function (Blueprint $table): void {
             $table->bigIncrements('sequence');
             $table->uuid('uuid');
             $table->uuid('batch_id');
@@ -38,7 +32,7 @@ return new class extends Migration
             $table->index(['type', 'should_display_on_index']);
         });
 
-        $schema->create('telescope_entries_tags', function (Blueprint $table) {
+        $schema->create('telescope_entries_tags', function (Blueprint $table): void {
             $table->uuid('entry_uuid');
             $table->string('tag');
 
@@ -51,14 +45,11 @@ return new class extends Migration
                 ->cascadeOnDelete();
         });
 
-        $schema->create('telescope_monitoring', function (Blueprint $table) {
+        $schema->create('telescope_monitoring', function (Blueprint $table): void {
             $table->string('tag')->primary();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         $schema = Schema::connection($this->getConnection());

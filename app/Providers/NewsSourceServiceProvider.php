@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App\Services\NewsSources;
-use App\Services\Sources\NewYorkTimeSource;
+use App\Services\Sources\NewsApiSource;
 use Illuminate\Support\ServiceProvider;
 
 class NewsSourceServiceProvider extends ServiceProvider
@@ -11,6 +11,7 @@ class NewsSourceServiceProvider extends ServiceProvider
     /**
      * Register services.
      */
+    #[\Override]
     public function register(): void
     {
         //
@@ -21,12 +22,12 @@ class NewsSourceServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->app->singleton(NewsSources::class, function ($app) {
+        $this->app->singleton(function ($app): \App\Services\NewsSources {
             return new NewsSources(
                 collect([
-                    //                    new NewsApiSource(),
-                    //                    new GuardianSource,
-                    new NewYorkTimeSource,
+                    new NewsApiSource,
+                    //                                        new GuardianSource,
+                    //                    new NewYorkTimeSource,
                 ])
             );
         });

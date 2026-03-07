@@ -17,7 +17,7 @@ class NewsApiSource extends NewsAbstract
         $data = $this->fetch('top-headlines');
 
         return LazyCollection::make(Arr::get($data, 'articles'))
-            ->map(fn ($article) => $this->map($article))->collect();
+            ->map(fn (array $article): \App\DTOs\ArticleDTO => $this->map($article))->collect();
     }
 
     public function __toString(): string

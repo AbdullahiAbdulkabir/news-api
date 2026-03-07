@@ -17,7 +17,7 @@ class NewYorkTimeSource extends NewsAbstract
         $data = $this->fetch('articlesearch.json');
 
         return LazyCollection::make(Arr::get($data, 'response.docs'))
-            ->map(fn ($article) => $this->map($article))->collect();
+            ->map(fn (array $article): ArticleDTO => $this->map($article))->collect();
     }
 
     public function __toString(): string

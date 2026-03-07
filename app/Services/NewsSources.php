@@ -17,9 +17,9 @@ readonly class NewsSources
 
     public function sync(): void
     {
-        $this->sources->each(function (NewsAbstract $source) {
+        $this->sources->each(function (NewsAbstract $source): void {
             $data = $source->fetchArticles();
-            $data->chunk(100)->each(function ($news) {
+            $data->chunk(100)->each(function (Collection $news): void {
                 $this->handleArticleSaving($news);
             });
 
@@ -29,11 +29,11 @@ readonly class NewsSources
 
     public function handleArticleSaving(Collection $data): void
     {
-        DB::transaction(function () use ($data) {
+        DB::transaction(function () use ($data): void {
             $categories = $this->handleCategorySaving($data);
             $this->handleAuthorsSaving($data);
 
-            $articles = $data->map(function ($article) {
+            $articles = $data->map(function ($article): array {
                 return [
                     'external_url' => $article->external_url,
                     'title' => $article->title,
@@ -59,7 +59,7 @@ readonly class NewsSources
     {
         $categories = collect($data->pluck('category'))->filter()->unique();
         if ($categories->isNotEmpty()) {
-            $payload = $categories->map(fn ($category) => [
+            $payload = $categories->map(fn ($category): array => [
                 'name' => $category,
             ]);
 
@@ -77,7 +77,7 @@ readonly class NewsSources
     {
         $authors = collect($data->pluck('author'))->filter()->unique();
         if ($authors->isNotEmpty()) {
-            $payload = $authors->map(fn ($category) => [
+            $payload = $authors->map(fn ($category): array => [
                 'name' => $category,
             ]);
 

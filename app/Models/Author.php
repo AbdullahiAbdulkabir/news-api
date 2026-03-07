@@ -10,7 +10,11 @@ class Author extends Model
         'name',
     ];
 
-    protected $casts = [
-        'name' => 'string',
-    ];
+    #[\Override]
+    protected function casts(): array
+    {
+        return [
+            'name' => 'string',
+        ];
+    }
 }

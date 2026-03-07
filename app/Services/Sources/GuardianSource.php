@@ -17,7 +17,7 @@ class GuardianSource extends NewsAbstract
         $data = $this->fetch();
 
         return LazyCollection::make(Arr::get($data, 'response.results'))
-            ->map(fn ($article) => $this->map($article))->collect();
+            ->map(fn (array $article): ArticleDTO => $this->map($article))->collect();
     }
 
     public function __toString(): string

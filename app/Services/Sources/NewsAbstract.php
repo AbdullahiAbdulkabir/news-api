@@ -40,6 +40,8 @@ abstract class NewsAbstract implements NewsInterface
                 ->get($url);
 
             if (! $response->successful()) {
+                Log::error("An error occurred while load news {$this->__toString()}", ['exception' => $response->json()]);
+
                 throw new HttpException(message: "Unable to load news {$this->__toString()}", data: ['error' => $response->json()]);
             }
 
