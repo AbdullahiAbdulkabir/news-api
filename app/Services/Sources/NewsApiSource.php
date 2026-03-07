@@ -55,7 +55,7 @@ class NewsApiSource extends NewsAbstract
             category: Arr::get($sources->firstWhere('name', Arr::get($data, 'source.name')),'category'),
             source: $this->__toString(). "- " .Arr::get($data, 'source.name'),
             image_url: Arr::get($data, 'urlToImage'),
-            url: Arr::get($data, 'url'),
+            external_url: Arr::get($data, 'url'),
             published_at: Carbon::parse(Arr::get($data, 'publishedAt')),
         );
     }

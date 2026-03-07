@@ -24,10 +24,12 @@ class FetchNewsCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle(NewsSources $source)
+    public function handle(NewsSources $source): int
     {
         $this->info('Fetching News Feed...');
         $source->sync();
         $this->info('News fetched Successful');
+
+        return 0;
     }
 }

@@ -33,9 +33,9 @@ readonly class NewsSources
         DB::transaction(function () use ($data) {
             $this->handleCategorySaving($data);
             $this->handleAuthorsSaving($data);
-            $data->each(function ($article) {
+            $data->each(function ($article) { //upsert
                 $article = Article::query()->updateOrCreate([
-                    'external_url' => $article->url,
+                    'external_url' => $article->external_url,
                 ], [
                     'title' => $article->title,
                     'description' => $article->description,
@@ -54,6 +54,7 @@ readonly class NewsSources
     {
         $categories = collect($data->pluck('category'))->filter()->unique();
 
+//        upsert
         if ($categories->isNotEmpty()) {
             $categories->each(function ($category) {
                 Category::updateOrCreate(['name' => $category]);

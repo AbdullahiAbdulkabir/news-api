@@ -6,7 +6,7 @@ namespace App\DTOs;
 
 use Carbon\Carbon;
 
-// You can also  use spatie data package
+// You can also use spatie data package
 readonly class ArticleDTO
 {
     public function __construct(
@@ -17,7 +17,7 @@ readonly class ArticleDTO
         public ?string $category,
         public string  $source,
         public ?string $image_url,
-        public ?string $url,
+        public ?string $external_url,
         public ?Carbon $published_at,
     )
     {

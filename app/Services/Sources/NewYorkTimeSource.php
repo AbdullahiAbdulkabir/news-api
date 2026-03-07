@@ -46,7 +46,7 @@ class NewYorkTimeSource extends NewsAbstract
             category: Arr::get($data, 'section_name'),
             source: $this->__toString(),
             image_url: Arr::get($data, 'multimedia.default.url'),
-            url: Arr::get($data, 'web_url'),
+            external_url: Arr::get($data, 'web_url'),
             published_at: Carbon::parse(Arr::get($data, 'pub_date')),
         );
     }
