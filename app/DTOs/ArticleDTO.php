@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\DTOs;
 
 use Carbon\Carbon;
+use Spatie\LaravelData\Data;
 
-// You can also use spatie data package
-readonly class ArticleDTO
+class ArticleDTO extends Data
 {
     public function __construct(
         public string $title,
