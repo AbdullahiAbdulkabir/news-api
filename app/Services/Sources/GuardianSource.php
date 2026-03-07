@@ -28,6 +28,7 @@ class GuardianSource extends NewsAbstract
     {
         return $this->loadData([
             'api-key' => Arr::get($this->sourceConfig(), 'api_key'),
+            'show-fields' => 'all'
         ], $url);
     }
 
@@ -41,11 +42,11 @@ class GuardianSource extends NewsAbstract
     {
         return new ArticleDTO(
             title: Arr::get($data, 'webTitle'),
-            description: Arr::get($data, 'description'),
+            description: Arr::get($data, 'fields.bodyText'),
             content: Arr::get($data, 'content'),
-            author: Arr::get($data, 'author'),
+            author: Arr::get($data, 'fields.byline'),
             category: Arr::get($data, 'sectionId'),
-            source: $this->__toString(),
+            source: $this->__toString(). '- '.Arr::get($data, 'fields.publication'),
             image_url: Arr::get($data, 'urlToImage'),
             url: Arr::get($data, 'webUrl'),
             published_at: Carbon::parse(Arr::get($data, 'webPublicationDate')),

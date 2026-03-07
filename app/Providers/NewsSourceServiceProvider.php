@@ -26,8 +26,8 @@ class NewsSourceServiceProvider extends ServiceProvider
         $this->app->singleton(NewsSources::class, function ($app) {
             return new NewsSources(
                 collect([
-                    new NewsApiSource(),
-//                    new GuardianSource(),
+//                    new NewsApiSource(),
+                    new GuardianSource(),
 //                    new NewYorkTimeSource(),
                 ])
             );
