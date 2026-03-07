@@ -10,6 +10,7 @@ class Author extends Model
         'name',
     ];
 
+    #[\Override]
     protected function casts(): array
     {
         return [

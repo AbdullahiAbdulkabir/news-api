@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Sources;
 
 use App\DTOs\ArticleDTO;
-use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
@@ -55,10 +55,10 @@ class NewsApiSource extends NewsAbstract
             content: Arr::get($data, 'content'),
             author: Arr::get($data, 'author'),
             category: Arr::get($sources->firstWhere('name', Arr::get($data, 'source.name')), 'category'),
-            source: $this->__toString().'- '.Arr::get($data, 'source.name'),
+            source: $this->__toString(),
             image_url: Arr::get($data, 'urlToImage'),
             external_url: Arr::get($data, 'url'),
-            published_at: Carbon::parse(Arr::get($data, 'publishedAt')),
+            published_at: CarbonImmutable::parse(Arr::get($data, 'publishedAt')),
         );
     }
 }

@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace App\DTOs;
 
-use Carbon\Carbon;
+use App\Models\Article;
+use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Collection;
+use Spatie\LaravelData\CursorPaginatedDataCollection;
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\Lazy;
+use Spatie\LaravelData\PaginatedDataCollection;
 
 class ArticleDTO extends Data
 {
@@ -18,6 +23,16 @@ class ArticleDTO extends Data
         public string $source,
         public ?string $image_url,
         public ?string $external_url,
-        public ?Carbon $published_at,
+        public ?CarbonImmutable $published_at,
     ) {}
+
+    public static function fromModel(Article $article): self
+    {
+        return self::from([
+            ...$article->toArray(),
+            'published_at' => CarbonImmutable::parse($article->published_at),
+            'authors' => Lazy::whenLoaded('authors', $article, fn (): Collection|PaginatedDataCollection|CursorPaginatedDataCollection|array => AuthorDTO::collect($article->authors)),
+            'categories' => Lazy::whenLoaded('categories', $article, fn (): Collection|PaginatedDataCollection|CursorPaginatedDataCollection|array => CategoryDto::collect($article->categories)),
+        ])->exclude('author', 'category');
+    }
 }

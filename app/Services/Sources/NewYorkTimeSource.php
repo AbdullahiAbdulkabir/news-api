@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Sources;
 
 use App\DTOs\ArticleDTO;
-use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
@@ -48,7 +48,7 @@ class NewYorkTimeSource extends NewsAbstract
             source: $this->__toString(),
             image_url: Arr::get($data, 'multimedia.default.url'),
             external_url: Arr::get($data, 'web_url'),
-            published_at: Carbon::parse(Arr::get($data, 'pub_date')),
+            published_at: CarbonImmutable::parse(Arr::get($data, 'pub_date')),
         );
     }
 }

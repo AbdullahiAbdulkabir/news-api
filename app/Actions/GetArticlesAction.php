@@ -21,7 +21,7 @@ class GetArticlesAction
                 AllowedFilter::partial('title'),
                 AllowedFilter::partial('authors.name'),
                 AllowedFilter::partial('categories.name'),
-                AllowedFilter::exact('source'),
+                AllowedFilter::partial('source'),
                 AllowedFilter::exact('published_at'),
             ])
             ->allowedIncludes('authors', 'categories')

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Article;
+use App\Models\ArticleCategory;
 use App\Models\Author;
 use App\Models\Category;
 use App\Services\Sources\NewsAbstract;
@@ -51,7 +52,7 @@ readonly class NewsSources
                 ['external_url'],
                 ['title', 'description', 'content', 'source', 'image_url', 'published_at', 'updated_at']
             );
-
+            $this->handleArticleCategorySaving($data, $categories);
         });
     }
 
@@ -70,7 +71,10 @@ readonly class NewsSources
             );
         }
 
-        return $categories;
+        return Category::query()
+            ->whereIn('name', $payload->toArray())
+            ->get()
+            ->keyBy('name');
     }
 
     public function handleAuthorsSaving(Collection $data): Collection
@@ -89,5 +93,38 @@ readonly class NewsSources
         }
 
         return $authors;
+    }
+
+    private function handleArticleCategorySaving(Collection $articles, Collection $categories): void
+    {
+        $savedArticles = Article::query()
+            ->whereIn('external_url', $articles->pluck('external_url'))
+            ->get()
+            ->keyBy('external_url');
+
+        $pivot = $articles
+            ->filter(fn ($article) => $article->category)
+            ->map(function ($article) use ($savedArticles, $categories): ?array {
+
+                $savedArticle = $savedArticles->get($article->external_url);
+                $category = $categories->get($article->category);
+
+                if (! $savedArticle || ! $category) {
+                    return null;
+                }
+
+                return [
+                    'article_id' => $savedArticle->id,
+                    'category_id' => $category->id,
+                ];
+
+            })
+            ->filter()
+            ->values();
+
+        ArticleCategory::query()->upsert(
+            $pivot->toArray(),
+            ['article_id', 'category_id']
+        );
     }
 }
