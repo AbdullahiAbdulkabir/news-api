@@ -22,7 +22,7 @@ class NewsSourceServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->app->singleton(function ($app): \App\Services\NewsSources {
+        $this->app->singleton(NewsSources::class, function () {
             return new NewsSources(
                 collect([
                     new NewsApiSource,
