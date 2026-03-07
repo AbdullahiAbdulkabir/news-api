@@ -36,10 +36,8 @@ class User extends Authenticatable
 
     /**
      * Get the attributes that should be cast.
-     *
      * @return array<string, string>
      */
-    #[\Override]
     protected function casts(): array
     {
         return [
@@ -49,7 +47,7 @@ class User extends Authenticatable
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Preference, $this>
+     * @return HasMany<Preference, $this>
      */
     public function preferences(): HasMany
     {

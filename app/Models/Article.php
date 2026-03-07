@@ -39,7 +39,6 @@ class Article extends Model
         )->withTimestamps();
     }
 
-    #[\Override]
     protected function casts(): array
     {
         return [
