@@ -3,8 +3,6 @@
 namespace App\Providers;
 
 use App\Services\NewsSources;
-use App\Services\Sources\GuardianSource;
-use App\Services\Sources\NewsApiSource;
 use App\Services\Sources\NewYorkTimeSource;
 use Illuminate\Support\ServiceProvider;
 
@@ -26,9 +24,9 @@ class NewsSourceServiceProvider extends ServiceProvider
         $this->app->singleton(NewsSources::class, function ($app) {
             return new NewsSources(
                 collect([
-                    //                    new NewsApiSource(),
-                    new GuardianSource,
-                    //                    new NewYorkTimeSource(),
+//                    new NewsApiSource(),
+//                    new GuardianSource,
+                    new NewYorkTimeSource(),
                 ])
             );
         });
