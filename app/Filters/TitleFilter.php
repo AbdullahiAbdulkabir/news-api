@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Filters;
@@ -14,6 +15,7 @@ class TitleFilter
             $title = Request::get('title');
             $builder->where('title', $title);
         }
+
         return $next($builder);
 
     }

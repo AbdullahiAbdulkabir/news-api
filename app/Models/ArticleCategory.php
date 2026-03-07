@@ -12,5 +12,4 @@ class ArticleCategory extends Pivot
     ];
 
     protected $table = 'article_categories';
-
 }

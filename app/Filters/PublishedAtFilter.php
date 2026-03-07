@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Filters;
@@ -15,6 +16,7 @@ class PublishedAtFilter
             $to = Request::get('to');
             $builder->whereBetween('published_at', [$from, $to]);
         }
+
         return $next($builder);
 
     }

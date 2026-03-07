@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services\Sources;
@@ -16,7 +17,7 @@ class NewsApiSource extends NewsAbstract
         $data = $this->fetch('top-headlines');
 
         return LazyCollection::make(Arr::get($data, 'articles'))
-            ->map(fn($article) => $this->map($article))->collect();
+            ->map(fn ($article) => $this->map($article))->collect();
     }
 
     public function __toString(): string
@@ -28,13 +29,14 @@ class NewsApiSource extends NewsAbstract
     {
         return $this->loadData([
             'apiKey' => Arr::get($this->sourceConfig(), 'api_key'),
-            'language' => 'en'
+            'language' => 'en',
         ], $url);
     }
 
     public function sources(): Collection
     {
         $data = $this->fetch('top-headlines/sources');
+
         return collect($data);
     }
 
@@ -52,8 +54,8 @@ class NewsApiSource extends NewsAbstract
             description: Arr::get($data, 'description'),
             content: Arr::get($data, 'content'),
             author: Arr::get($data, 'author'),
-            category: Arr::get($sources->firstWhere('name', Arr::get($data, 'source.name')),'category'),
-            source: $this->__toString(). "- " .Arr::get($data, 'source.name'),
+            category: Arr::get($sources->firstWhere('name', Arr::get($data, 'source.name')), 'category'),
+            source: $this->__toString().'- '.Arr::get($data, 'source.name'),
             image_url: Arr::get($data, 'urlToImage'),
             external_url: Arr::get($data, 'url'),
             published_at: Carbon::parse(Arr::get($data, 'publishedAt')),

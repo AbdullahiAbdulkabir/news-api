@@ -1,8 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services\Sources;
-
 
 use App\DTOs\ArticleDTO;
 use App\Exceptions\HttpException;
@@ -39,14 +39,14 @@ abstract class NewsAbstract implements NewsInterface
             )->retry(2, 2000)->withQueryParameters($params)
                 ->get($url);
 
-
-            if (!$response->successful()) {
-                throw new HttpException(message: "Unable to load news {$this->__toString()}", data: ["error" => $response->json()]);
+            if (! $response->successful()) {
+                throw new HttpException(message: "Unable to load news {$this->__toString()}", data: ['error' => $response->json()]);
             }
 
             return $response->json();
         } catch (\Throwable $throwable) {
-            Log::error("An error occurred while load news {$this->__toString()}", ["exception" => $throwable]);
+            Log::error("An error occurred while load news {$this->__toString()}", ['exception' => $throwable]);
+
             return [];
         }
 

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services;
@@ -11,16 +12,13 @@ use Illuminate\Support\Facades\DB;
 
 readonly class NewsSources
 {
-    public function __construct(protected Collection $sources)
-    {
-
-    }
+    public function __construct(protected Collection $sources) {}
 
     public function sync(): void
     {
         $this->sources->each(function (NewsAbstract $source) {
             $data = $source->fetchArticles();
-            $data->chunk(100)->each(function ($news) use ($source) {
+            $data->chunk(100)->each(function ($news) {
                 $this->handleArticleSaving($news);
             });
 
@@ -33,7 +31,7 @@ readonly class NewsSources
         DB::transaction(function () use ($data) {
             $this->handleCategorySaving($data);
             $this->handleAuthorsSaving($data);
-            $data->each(function ($article) { //upsert
+            $data->each(function ($article) { // upsert
                 $article = Article::query()->updateOrCreate([
                     'external_url' => $article->external_url,
                 ], [
@@ -45,7 +43,7 @@ readonly class NewsSources
                     'published_at' => $article->published_at,
                 ]);
 
-//                $article->categories()->sync($article->categories);
+                //                $article->categories()->sync($article->categories);
             });
         });
     }
@@ -54,7 +52,7 @@ readonly class NewsSources
     {
         $categories = collect($data->pluck('category'))->filter()->unique();
 
-//        upsert
+        //        upsert
         if ($categories->isNotEmpty()) {
             $categories->each(function ($category) {
                 Category::updateOrCreate(['name' => $category]);
@@ -64,8 +62,5 @@ readonly class NewsSources
         return $categories;
     }
 
-    public function handleAuthorsSaving(Collection $articles): void
-    {
-
-    }
+    public function handleAuthorsSaving(Collection $articles): void {}
 }

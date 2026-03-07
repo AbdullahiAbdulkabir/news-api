@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Filters;
@@ -12,7 +13,7 @@ class CategoryFilter
     {
         if (Request::filled('category')) {
             $category = Request::get('category');
-            $builder->whereHas('categories', fn($query) => $query->where('name', $category));
+            $builder->whereHas('categories', fn ($query) => $query->where('name', $category));
         }
 
         return $next($builder);

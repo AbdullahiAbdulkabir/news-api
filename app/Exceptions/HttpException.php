@@ -23,7 +23,7 @@ class HttpException extends Exception implements Renderable
             response()->json([
                 'status' => false,
                 'message' => $this->message,
-                'data' => $this->data ?? []
+                'data' => $this->data ?? [],
             ], $this->code);
     }
 }

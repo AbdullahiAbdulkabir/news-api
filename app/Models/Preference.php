@@ -8,6 +8,6 @@ class Preference extends Model
 {
     protected $fillable = [
         'user_id',
-        'preference_type'
+        'preference_type',
     ];
 }

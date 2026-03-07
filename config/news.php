@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 return [
     'newsapi' => [
         'api_key' => env('NEWS_API_KEY'),
@@ -14,4 +16,3 @@ return [
         'url' => env('NYTIMES_URL', 'https://content.guardianapis.com/'),
     ],
 ];
-

@@ -25,7 +25,6 @@ class Article extends Model
         'description' => 'string',
     ];
 
-
     public function authors(): BelongsToMany
     {
         return $this->belongsToMany(

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services\Sources;
@@ -16,7 +17,7 @@ class GuardianSource extends NewsAbstract
         $data = $this->fetch();
 
         return LazyCollection::make(Arr::get($data, 'response.results'))
-            ->map(fn($article) => $this->map($article))->collect();
+            ->map(fn ($article) => $this->map($article))->collect();
     }
 
     public function __toString(): string
@@ -28,10 +29,9 @@ class GuardianSource extends NewsAbstract
     {
         return $this->loadData([
             'api-key' => Arr::get($this->sourceConfig(), 'api_key'),
-            'show-fields' => 'all'
+            'show-fields' => 'all',
         ], $url);
     }
-
 
     public function sourceConfig(): array
     {
@@ -46,7 +46,7 @@ class GuardianSource extends NewsAbstract
             content: Arr::get($data, 'content'),
             author: Arr::get($data, 'fields.byline'),
             category: Arr::get($data, 'sectionId'),
-            source: $this->__toString(). '- '.Arr::get($data, 'fields.publication'),
+            source: $this->__toString().'- '.Arr::get($data, 'fields.publication'),
             image_url: Arr::get($data, 'urlToImage'),
             external_url: Arr::get($data, 'webUrl'),
             published_at: Carbon::parse(Arr::get($data, 'webPublicationDate')),

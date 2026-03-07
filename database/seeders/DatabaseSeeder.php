@@ -15,10 +15,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        //will be used to set user preferences
+        // will be used to set user preferences
         $user = User::firstWhere('email', 'test@example.com');
 
-        if (!$user) {
+        if (! $user) {
             $user = User::factory()->create([
                 'name' => 'Test User',
                 'email' => 'test@example.com',
@@ -31,7 +31,6 @@ class DatabaseSeeder extends Seeder
                 'preference_type' => $category->name,
             ]);
         }
-
 
     }
 }

@@ -11,6 +11,6 @@ class Author extends Model
     ];
 
     protected $casts = [
-      'name' => 'string',
+        'name' => 'string',
     ];
 }

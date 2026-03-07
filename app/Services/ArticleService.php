@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services;
@@ -16,7 +17,7 @@ class ArticleService
 {
     public function fetchArticles(): AnonymousResourceCollection
     {
-        $articles = Pipeline::send(Article::query()->with(['authors','categories']))->through([
+        $articles = Pipeline::send(Article::query()->with(['authors', 'categories']))->through([
             SourceFilter::class,
             PublishedAtFilter::class,
             TitleFilter::class,
