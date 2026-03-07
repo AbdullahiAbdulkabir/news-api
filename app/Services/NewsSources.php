@@ -13,9 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 readonly class NewsSources
 {
-    public function __construct(protected Collection $sources)
-    {
-    }
+    public function __construct(protected Collection $sources) {}
 
     public function sync(): void
     {
@@ -61,8 +59,8 @@ readonly class NewsSources
     {
         $categories = collect($data->pluck('category'))->filter()->unique();
         if ($categories->isNotEmpty()) {
-            $payload = $categories->map(fn($category) => [
-                'name' => $category
+            $payload = $categories->map(fn ($category) => [
+                'name' => $category,
             ]);
 
             Category::upsert(
@@ -79,8 +77,8 @@ readonly class NewsSources
     {
         $authors = collect($data->pluck('author'))->filter()->unique();
         if ($authors->isNotEmpty()) {
-            $payload = $authors->map(fn($category) => [
-                'name' => $category
+            $payload = $authors->map(fn ($category) => [
+                'name' => $category,
             ]);
 
             Author::upsert(

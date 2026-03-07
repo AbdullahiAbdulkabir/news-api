@@ -45,7 +45,6 @@ abstract class NewsAbstract implements NewsInterface
 
             Log::info("Successful loading news {$this->__toString()}");
 
-
             return $response->json();
         } catch (\Throwable $throwable) {
             Log::error("An error occurred while load news {$this->__toString()}", ['exception' => $throwable]);

@@ -1,8 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Actions;
-
 
 use App\DTOs\ArticleDTO;
 use App\Models\Article;
@@ -27,7 +27,6 @@ class GetArticlesAction
             ->allowedIncludes('authors', 'categories')
             ->defaultSort('-published_at')
             ->allowedSorts(['title', 'authors.name', 'categories.name', 'source', 'published_at']);
-
 
         return ArticleDTO::collect($query->cursorPaginate());
     }
