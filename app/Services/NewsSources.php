@@ -198,10 +198,8 @@ readonly class NewsSources
                     return [];
                 }
 
-                $authorNames = str($article->author)
-                    ->explode(',')
-                    ->map('trim')
-                    ->filter();
+                $authorNames = collect(explode(',', $article->author))
+                    ->map(fn ($name): string => trim($name))->filter();
 
                 return $authorNames->map(function ($name) use ($savedArticle, $authors): ?array {
                     $author = $authors->get($name);

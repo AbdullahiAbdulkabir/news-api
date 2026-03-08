@@ -55,7 +55,7 @@ class NewsApiSource extends NewsAbstract
             'content' => Arr::get($data, 'content'),
             'author' => Arr::get($data, 'author'),
             'category' => Arr::get($sources->firstWhere('name', Arr::get($data, 'source.name')), 'category'),
-            'source' => $this->__toString().'- '.Arr::get($data, 'source.name'),
+            'source' => $this->__toString(),
             'image_url' => Arr::get($data, 'urlToImage'),
             'external_url' => Arr::get($data, 'url'),
             'published_at' => CarbonImmutable::parse(Arr::get($data, 'publishedAt')),
