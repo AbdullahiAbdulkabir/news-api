@@ -82,6 +82,7 @@ php artisan test
 
 ```bash
 ./vendor/bin/pint
+./vendor/bin/rector
 ```
 
 ## Architecture & Design Patterns
