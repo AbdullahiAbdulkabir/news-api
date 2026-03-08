@@ -88,7 +88,7 @@ php artisan test
 ## Architecture & Design Patterns
 - I implemented a command that allows pulling articles from different sources. 
 
-This is scheduled every 30 mins
+This is scheduled every 30 mins in `routes/console.php`
 ```php
 Schedule::command('fetch:news')->everyThirtyMinutes();
 ```
@@ -98,17 +98,18 @@ it implements the singleton
 
 ```php
 $this->app->singleton(NewsSources::class, function () {
-    return new NewsSources(collect([
-           //  new NewsApiSource,
-           new GuardianSource,
-           //new NewYorkTimeSource,
-           ])
-        );
-    });
+            $source = new NewsSources;
+            $source->addSource(new NewsApiSource);
+            if (! app()->environment('testing')) {
+                $source->addSource(new GuardianSource);
+                $source->addSource(new NewYorkTimeSource);
+            }
+            return $source;
+        });
 ```
 
 - Each source implements an abstract class NewsAbstract::class and implements an interface to fetch articles from various sources.
-- I implemented Data Transfer Objects (DTOs), ArticleDTO, AuthorDTO, CategoryDto to allow data transformation. It extends spatie laravel data. Allows for unification of data promoting Single responsibility Principle (SRP) and encapsulation 
+- I implemented Data Transfer Objects (DTOs), ArticleDTO, AuthorDTO, CategoryDTO to allow data transformation. It extends spatie laravel data. Allows for unification of data promoting Single responsibility Principle (SRP) and encapsulation 
 - 
 ### Sample Request
 To retrieve all articles, the endpoint is 

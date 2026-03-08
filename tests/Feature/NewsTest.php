@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Services\NewsSources;
 use App\Services\Sources\NewsApiSource;
 use Carbon\CarbonImmutable;
+use Illuminate\Console\Command;
 use Illuminate\Console\Scheduling\Event;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Artisan;
@@ -107,4 +108,13 @@ test('command handles empty API responses', function (): void {
 
     expect($exitCode)->toBe(0)
         ->and(App\Models\Article::count())->toBe(0);
+});
+
+test('fetch:news command returns error if source unavailable', function () {
+    $newsSources = new NewsSources;
+    $newsSources->addSource(new NewsApiSource);
+
+    $exitCode = Artisan::call('fetch:news', ['--source' => 'NonExistentSource']);
+
+    expect($exitCode)->toBe(Command::FAILURE);
 });
