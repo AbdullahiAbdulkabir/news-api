@@ -1,6 +1,5 @@
 <?php
 
-use App\Console\Commands\FetchNewsCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -15,10 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         //
-    })->withSchedule(function (Schedule $schedule) {
-        //        Can be scheduled to run every 30minn
-        //        $schedule->call(FetchNewsCommand::class)->everyThirtyMinutes();
-    })
+    })->withSchedule(function (Schedule $schedule) {})
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();

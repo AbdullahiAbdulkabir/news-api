@@ -17,6 +17,8 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
             $table->timestamps();
+
+            $table->unique(['article_id', 'author_id']);
         });
     }
 

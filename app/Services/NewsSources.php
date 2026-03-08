@@ -66,6 +66,7 @@ readonly class NewsSources
                     'updated_at' => now(),
                 ];
             });
+
             Article::query()->upsert(
                 $articles->toArray(),
                 ['external_url'],

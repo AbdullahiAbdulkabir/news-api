@@ -14,7 +14,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->text('content')->nullable();
             $table->text('image_url')->nullable();
-            $table->text('external_url')->nullable();
+            $table->text('external_url')->unique()->nullable();
             $table->string('source', 100);
             $table->timestamp('published_at')->index();
 
