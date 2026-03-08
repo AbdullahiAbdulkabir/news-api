@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services\Sources;
 
-use App\DTOs\ArticleDTO;
 use App\Exceptions\HttpException;
 use App\Interfaces\NewsInterface;
+use Closure;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -21,7 +21,7 @@ abstract class NewsAbstract implements NewsInterface
 
     abstract public function sourceConfig(): array;
 
-    abstract public function map(array $data): ArticleDTO;
+    abstract public function mapCallback(): Closure;
 
     public function getClient(string $baseUrl): PendingRequest
     {

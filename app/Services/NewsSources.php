@@ -4,35 +4,54 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Interfaces\NewsInterface;
 use App\Models\Article;
+use App\Models\ArticleAuthor;
 use App\Models\ArticleCategory;
 use App\Models\Author;
 use App\Models\Category;
-use App\Services\Sources\NewsAbstract;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 readonly class NewsSources
 {
-    public function __construct(protected Collection $sources) {}
+    public Collection $sources;
 
-    public function sync(): void
+    public function __construct()
     {
-        $this->sources->each(function (NewsAbstract $source): void {
-            $data = $source->fetchArticles();
-            $data->chunk(100)->each(function (Collection $news): void {
-                $this->handleArticleSaving($news);
+        $this->sources = Collection::make();
+    }
+
+    public function addSource(NewsInterface $source): static
+    {
+        $this->sources->push($source);
+
+        return $this;
+    }
+
+    public function getSources(): Collection
+    {
+        return $this->sources;
+    }
+
+    public function sync(?string $specificSource = null): void
+    {
+        $this->sources->when($specificSource,
+            fn ($s) => $s->filter(fn ($s) => $s->__toString() === $specificSource))
+            ->each(function (NewsInterface $source): void {
+                $data = $source->fetchArticles();
+                $data->chunk(100)->each(function (Collection $articles): void {
+                    $this->handleArticleSaving($articles);
+                });
             });
-
-        });
-
     }
 
     public function handleArticleSaving(Collection $data): void
     {
         DB::transaction(function () use ($data): void {
             $categories = $this->handleCategorySaving($data);
-            $this->handleAuthorsSaving($data);
+            $authors = $this->handleAuthorsSaving($data);
 
             $articles = $data->map(function ($article): array {
                 return [
@@ -53,78 +72,162 @@ readonly class NewsSources
                 ['title', 'description', 'content', 'source', 'image_url', 'published_at', 'updated_at']
             );
             $this->handleArticleCategorySaving($data, $categories);
+            $this->handleArticleAuthorSaving($data, $authors);
         });
+
+        $this->clearCache();
+    }
+
+    private function clearCache(): void
+    {
+        Cache::tags(Article::CACHE_KEY)->flush();
     }
 
     public function handleCategorySaving(Collection $data): Collection
     {
-        $categories = collect($data->pluck('category'))->filter()->unique();
-        if ($categories->isNotEmpty()) {
-            $payload = $categories->map(fn ($category): array => [
-                'name' => $category,
-            ]);
+        $categories = $data
+            ->pluck('category')->filter()
+            ->flatMap(fn ($category) => explode(',', $category))
+            ->map(fn ($category) => trim($category))->filter()->unique()
+            ->values();
 
-            Category::upsert(
-                $payload->toArray(),
-                ['name'],
-                ['updated_at']
-            );
+        if ($categories->isEmpty()) {
+            return $categories;
         }
+
+        $payload = $categories->map(fn ($category): array => [
+            'name' => $category,
+        ]);
+
+        Category::upsert(
+            $payload->toArray(),
+            ['name'],
+            ['updated_at']
+        );
 
         return Category::query()
             ->whereIn('name', $payload->toArray())
             ->get()
             ->keyBy('name');
+
     }
 
     public function handleAuthorsSaving(Collection $data): Collection
     {
-        $authors = collect($data->pluck('author'))->filter()->unique();
-        if ($authors->isNotEmpty()) {
-            $payload = $authors->map(fn ($category): array => [
-                'name' => $category,
-            ]);
+        $authors = $data
+            ->pluck('author')->filter()
+            ->flatMap(fn ($author) => explode(',', $author))
+            ->map(fn ($author) => trim($author))->filter()->unique()
+            ->values();
 
-            Author::upsert(
-                $payload->toArray(),
-                ['name'],
-                ['updated_at']
-            );
+        if ($authors->isEmpty()) {
+
+            return $authors;
         }
 
-        return $authors;
+        $payload = $authors->map(fn ($author): array => [
+            'name' => $author,
+        ]);
+
+        Author::upsert(
+            $payload->toArray(),
+            ['name'],
+            ['updated_at']
+        );
+
+        return Author::query()
+            ->whereIn('name', $payload->toArray())
+            ->get()
+            ->keyBy('name');
     }
 
     private function handleArticleCategorySaving(Collection $articles, Collection $categories): void
     {
-        $savedArticles = Article::query()
-            ->whereIn('external_url', $articles->pluck('external_url'))
-            ->get()
-            ->keyBy('external_url');
+        $savedArticles = $this->getSavedArticles($articles);
 
         $pivot = $articles
             ->filter(fn ($article) => $article->category)
-            ->map(function ($article) use ($savedArticles, $categories): ?array {
+            ->flatMap(function ($article) use ($savedArticles, $categories) {
 
                 $savedArticle = $savedArticles->get($article->external_url);
-                $category = $categories->get($article->category);
 
-                if (! $savedArticle || ! $category) {
-                    return null;
+                if (! $savedArticle) {
+                    return [];
                 }
 
-                return [
-                    'article_id' => $savedArticle->id,
-                    'category_id' => $category->id,
-                ];
+                $categoryNames = collect(explode(',', $article->category))
+                    ->map(fn ($name) => trim($name));
 
+                return collect($categoryNames)
+                    ->map(function ($name) use ($savedArticle, $categories) {
+
+                        $category = $categories->get($name);
+
+                        if (! $category) {
+                            return null;
+                        }
+
+                        return [
+                            'article_id' => $savedArticle->id,
+                            'category_id' => $category->id,
+                        ];
+                    })
+                    ->filter()
+                    ->values();
             })
-            ->filter()
             ->values();
 
         ArticleCategory::query()->upsert(
             $pivot->toArray(),
             ['article_id', 'category_id']
         );
+    }
+
+    private function handleArticleAuthorSaving(Collection $articles, Collection $authors): void
+    {
+        $savedArticles = $this->getSavedArticles($articles);
+
+        $pivot = $articles
+            ->filter(fn ($article) => $article->author)
+            ->flatMap(function ($article) use ($savedArticles, $authors) {
+
+                $savedArticle = $savedArticles->get($article->external_url);
+
+                if (! $savedArticle) {
+                    return [];
+                }
+
+                $authorNames = str($article->author)
+                    ->explode(',')
+                    ->map('trim')
+                    ->filter();
+
+                return $authorNames->map(function ($name) use ($savedArticle, $authors) {
+                    $author = $authors->get($name);
+
+                    if (! $author) {
+                        return null;
+                    }
+
+                    return [
+                        'article_id' => $savedArticle->id,
+                        'author_id' => $author->id,
+                    ];
+                })->filter();
+            })
+            ->values();
+
+        ArticleAuthor::query()->upsert(
+            $pivot->toArray(),
+            ['article_id', 'author_id']
+        );
+    }
+
+    private function getSavedArticles(Collection $articles): Collection
+    {
+        return Article::query()
+            ->whereIn('external_url', $articles->pluck('external_url'))
+            ->get()
+            ->keyBy('external_url');
     }
 }

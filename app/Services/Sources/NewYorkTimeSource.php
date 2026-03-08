@@ -17,7 +17,7 @@ class NewYorkTimeSource extends NewsAbstract
         $data = $this->fetch('articlesearch.json');
 
         return LazyCollection::make(Arr::get($data, 'response.docs'))
-            ->map(fn (array $article): ArticleDTO => $this->map($article))->collect();
+            ->map($this->mapCallback())->collect();
     }
 
     public function __toString(): string
@@ -37,18 +37,18 @@ class NewYorkTimeSource extends NewsAbstract
         return config('news.nytimes');
     }
 
-    public function map(array $data): ArticleDTO
+    public function mapCallback(): \Closure
     {
-        return new ArticleDTO(
-            title: Arr::get($data, 'headline.main'),
-            description: Arr::get($data, 'snippet'),
-            content: Arr::get($data, 'abstract'),
-            author: Arr::get($data, 'byline.original'),
-            category: Arr::get($data, 'section_name'),
-            source: $this->__toString(),
-            image_url: Arr::get($data, 'multimedia.default.url'),
-            external_url: Arr::get($data, 'web_url'),
-            published_at: CarbonImmutable::parse(Arr::get($data, 'pub_date')),
-        );
+        return fn ($data) => ArticleDTO::from([
+            'title' => Arr::get($data, 'headline.main'),
+            'description' => Arr::get($data, 'snippet'),
+            'content' => Arr::get($data, 'abstract'),
+            'author' => Arr::get($data, 'byline.original'),
+            'category' => Arr::get($data, 'section_name'),
+            'source' => $this->__toString(),
+            'image_url' => Arr::get($data, 'multimedia.default.url'),
+            'external_url' => Arr::get($data, 'web_url'),
+            'published_at' => CarbonImmutable::parse(Arr::get($data, 'pub_date')),
+        ]);
     }
 }

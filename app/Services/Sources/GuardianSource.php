@@ -17,7 +17,7 @@ class GuardianSource extends NewsAbstract
         $data = $this->fetch();
 
         return LazyCollection::make(Arr::get($data, 'response.results'))
-            ->map(fn (array $article): ArticleDTO => $this->map($article))->collect();
+            ->map($this->mapCallback())->collect();
     }
 
     public function __toString(): string
@@ -38,18 +38,18 @@ class GuardianSource extends NewsAbstract
         return config('news.guardian');
     }
 
-    public function map(array $data): ArticleDTO
+    public function mapCallback(): \Closure
     {
-        return new ArticleDTO(
-            title: Arr::get($data, 'webTitle'),
-            description: Arr::get($data, 'fields.bodyText'),
-            content: Arr::get($data, 'content'),
-            author: Arr::get($data, 'fields.byline'),
-            category: Arr::get($data, 'sectionId'),
-            source: $this->__toString().'- '.Arr::get($data, 'fields.publication'),
-            image_url: Arr::get($data, 'urlToImage'),
-            external_url: Arr::get($data, 'webUrl'),
-            published_at: CarbonImmutable::parse(Arr::get($data, 'webPublicationDate')),
-        );
+        return fn ($data) => ArticleDTO::from([
+            'title' => Arr::get($data, 'webTitle'),
+            'description' => Arr::get($data, 'fields.bodyText'),
+            'content' => Arr::get($data, 'content'),
+            'author' => Arr::get($data, 'fields.byline'),
+            'category' => Arr::get($data, 'sectionId'),
+            'source' => $this->__toString().'- '.Arr::get($data, 'fields.publication'),
+            'image_url' => Arr::get($data, 'urlToImage'),
+            'external_url' => Arr::get($data, 'webUrl'),
+            'published_at' => CarbonImmutable::parse(Arr::get($data, 'webPublicationDate')),
+        ]);
     }
 }

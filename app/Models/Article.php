@@ -2,11 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Article extends Model
 {
+    use HasFactory;
+
+    const CACHE_KEY = 'articles';
+
     protected $fillable = [
         'title',
         'description',
@@ -18,7 +23,7 @@ class Article extends Model
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\App\Models\Author, $this>
+     * @return BelongsToMany<Author, $this>
      */
     public function authors(): BelongsToMany
     {
@@ -29,7 +34,7 @@ class Article extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\App\Models\Category, $this>
+     * @return BelongsToMany<Category, $this>
      */
     public function categories(): BelongsToMany
     {
@@ -39,7 +44,6 @@ class Article extends Model
         )->withTimestamps();
     }
 
-    #[\Override]
     protected function casts(): array
     {
         return [

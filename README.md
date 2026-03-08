@@ -51,9 +51,12 @@ php artisan serve
 ```
 the app should be available in [http://localhost:8000/](http://127.0.0.1:8000/)
 
-Fetch news from various apis:
+Fetch news from a specific a source
+NOTE: If no source is specified, it runs for the configured sources in the NewsSourceServiceProvider
 ```bash
-php artisan fetch:news 
+php artisan fetch:news  --source=NewsAPI
+#or "New York Times" or "The Guardian"
+
 ```
 
 ## Deployment
@@ -109,6 +112,10 @@ $this->app->singleton(NewsSources::class, function () {
 ### Sample Request
 To retrieve all articles, the endpoint is 
 - **Get All Articles**: `GET /api/articles`
+```http
+  GET /api/articles?filter[title]=live&filter[authors.name]=Jessie&page[number]=1
+  ```
+
 -  **Query Parameters**:
    -  `filter[title]`: Filter articles by title.
    - `filter[authors.name]`: Filter articles by author's name.
@@ -118,6 +125,7 @@ To retrieve all articles, the endpoint is
 ### Sample response
 ![Response](sample-response.jpeg "Response")
 
+Submitted by [Abdullahi Abdulkabir]([https://github.com/abdullahiabdulkabir])
 
 
 

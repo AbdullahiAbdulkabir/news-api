@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Services\NewsSources;
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Command\Command as CommandAlias;
 
 class FetchNewsCommand extends Command
 {
@@ -12,7 +13,7 @@ class FetchNewsCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'fetch:news';
+    protected $signature = 'fetch:news {--source= : Fetch from a specific source}';
 
     /**
      * The console command description.
@@ -24,12 +25,25 @@ class FetchNewsCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle(NewsSources $source): int
+    public function handle(NewsSources $newsSources): int
     {
-        $this->info('Fetching News Feed...');
-        $source->sync();
+        $specificSource = $this->option('source');
+        $availableSources = $newsSources->sources;
+
+        if ($specificSource) {
+            $availableSources = $availableSources->filter(fn ($source) => $source->__toString() === $specificSource);
+
+            if ($availableSources->isEmpty()) {
+                $this->error("{$specificSource} not available");
+
+                return CommandAlias::FAILURE;
+            }
+        }
+
+        $this->info("Fetching News Feed for sources available: {$availableSources->count()}...");
+        $newsSources->sync($specificSource);
         $this->info('News fetched Successful');
 
-        return 0;
+        return CommandAlias::SUCCESS;
     }
 }

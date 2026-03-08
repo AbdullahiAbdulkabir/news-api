@@ -19,7 +19,7 @@ class GetArticlesAction
     {
         $query = Request::query();
         $cacheKey = $this->cacheKey($query);
-        $paginate = Cache::tags(['articles'])->flexible($cacheKey,
+        $paginate = Cache::tags([Article::CACHE_KEY])->flexible($cacheKey,
             [200, 400],
             fn () => $this->buildQuery());
 

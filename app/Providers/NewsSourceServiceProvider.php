@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Services\NewsSources;
+use App\Services\Sources\GuardianSource;
 use App\Services\Sources\NewsApiSource;
+use App\Services\Sources\NewYorkTimeSource;
 use Illuminate\Support\ServiceProvider;
 
 class NewsSourceServiceProvider extends ServiceProvider
@@ -23,13 +25,15 @@ class NewsSourceServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->app->singleton(NewsSources::class, function () {
-            return new NewsSources(
-                collect([
-                    new NewsApiSource,
-                    //                                        new GuardianSource,
-                    //                    new NewYorkTimeSource,
-                ])
-            );
+            $source = new NewsSources;
+
+            $source->addSource(new NewsApiSource);
+            if (! app()->environment('testing')) {
+                $source->addSource(new GuardianSource);
+                $source->addSource(new NewYorkTimeSource);
+            }
+
+            return $source;
         });
     }
 }

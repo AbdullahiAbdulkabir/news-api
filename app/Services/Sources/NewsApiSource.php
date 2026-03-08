@@ -17,7 +17,7 @@ class NewsApiSource extends NewsAbstract
         $data = $this->fetch('top-headlines');
 
         return LazyCollection::make(Arr::get($data, 'articles'))
-            ->map(fn (array $article): \App\DTOs\ArticleDTO => $this->map($article))->collect();
+            ->map($this->mapCallback())->collect();
     }
 
     public function __toString(): string
@@ -45,20 +45,20 @@ class NewsApiSource extends NewsAbstract
         return config('news.newsapi');
     }
 
-    public function map(array $data): ArticleDTO
+    public function mapCallback(): \Closure
     {
         $sources = $this->sources();
 
-        return new ArticleDTO(
-            title: Arr::get($data, 'title'),
-            description: Arr::get($data, 'description'),
-            content: Arr::get($data, 'content'),
-            author: Arr::get($data, 'author'),
-            category: Arr::get($sources->firstWhere('name', Arr::get($data, 'source.name')), 'category'),
-            source: $this->__toString(),
-            image_url: Arr::get($data, 'urlToImage'),
-            external_url: Arr::get($data, 'url'),
-            published_at: CarbonImmutable::parse(Arr::get($data, 'publishedAt')),
-        );
+        return fn ($data) => ArticleDTO::from([
+            'title' => Arr::get($data, 'title'),
+            'description' => Arr::get($data, 'description'),
+            'content' => Arr::get($data, 'content'),
+            'author' => Arr::get($data, 'author'),
+            'category' => Arr::get($sources->firstWhere('name', Arr::get($data, 'source.name')), 'category'),
+            'source' => $this->__toString(),
+            'image_url' => Arr::get($data, 'urlToImage'),
+            'external_url' => Arr::get($data, 'url'),
+            'published_at' => CarbonImmutable::parse(Arr::get($data, 'publishedAt')),
+        ]);
     }
 }
