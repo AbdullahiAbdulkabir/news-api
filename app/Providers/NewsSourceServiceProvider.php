@@ -10,6 +10,7 @@ use Illuminate\Support\ServiceProvider;
 
 class NewsSourceServiceProvider extends ServiceProvider
 {
+    #[\Override]
     public function register(): void
     {
         //

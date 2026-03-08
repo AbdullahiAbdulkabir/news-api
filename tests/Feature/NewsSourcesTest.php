@@ -26,7 +26,6 @@ test('can add news source to sources provider', function (): void {
         ->and($this->newsSources->sources->first())->toBe($source);
 });
 
-// Article Fetching Tests
 test('fetch news calls fetchArticles on all sources', function (): void {
     // Create mock sources
     $source1 = Mockery::mock(NewsInterface::class);
@@ -45,7 +44,6 @@ test('fetch news calls fetchArticles on all sources', function (): void {
     $this->newsSources->sync();
 });
 
-// Article Saving Tests
 test('saves new article with single author', function (): void {
     $articleData = ArticleDTO::from([
         'title' => 'Test Article',
@@ -77,7 +75,7 @@ test('saves new article with single author', function (): void {
 test('saves article with multiple authors', function (): void {
     $articleData = ArticleDTO::from([
         'title' => 'Test Article',
-        'external_url' => 'https://example.com/test',
+        'external_url' => 'https://example.com/external_url',
         'content' => 'Test content',
         'source' => '',
         'published_at' => now(),
@@ -92,39 +90,39 @@ test('saves article with multiple authors', function (): void {
     $this->newsSources->addSource($source);
     $this->newsSources->sync();
 
-    $article = Article::where('external_url', 'https://example.com/test')->first();
+    $article = Article::where('external_url', 'https://example.com/external_url')->first();
     expect($article->authors)->toHaveCount(2)
         ->and($article->authors->pluck('name')->toArray())->toContain('John Doe', 'Jane Smith');
 });
 
 test('updates existing article without creating duplicate', function (): void {
-    // Create initial article data
+    // initial article record
     $initial = ArticleDTO::from([
         'title' => 'Original Title',
-        'external_url' => 'https://example.com/test',
+        'external_url' => 'https://example.com/external_url',
         'source' => '',
         'content' => 'Original content',
         'published_at' => now(),
         'author' => 'John Doe',
     ]);
 
-    // Updated version of the same article
+    // Updated version
     $updated = ArticleDTO::from([
         'title' => 'Updated Title',
-        'external_url' => 'https://example.com/test',
+        'external_url' => 'https://example.com/external_url',
         'content' => 'Updated content',
         'source' => '',
         'published_at' => now(),
         'author' => 'John Doe',
     ]);
 
-    // Mock the first news source
+    // Mock the news source
     $source1 = Mockery::mock(NewsInterface::class);
     $source1->shouldReceive('fetchArticles')
         ->once()
         ->andReturn(collect([$initial]));
 
-    // Add the first source and fetch news
+    // Add the first source and fetch news from the source
     $this->newsSources->addSource($source1);
     $this->newsSources->sync();
 
@@ -142,7 +140,7 @@ test('updates existing article without creating duplicate', function (): void {
     $this->newsSources->sync();
 
     // Assert that there is only one article with the given URL
-    $articles = Article::where('external_url', 'https://example.com/test')->get();
+    $articles = Article::where('external_url', 'https://example.com/external_url')->get();
     expect($articles)->toHaveCount(1)
         ->and($articles->first()->title)->toBe('Updated Title');
 });
@@ -151,7 +149,7 @@ test('updates existing article without creating duplicate', function (): void {
 test('handles article with no author', function (): void {
     $articleData = ArticleDTO::from([
         'title' => 'Test Article',
-        'external_url' => 'https://example.com/test',
+        'external_url' => 'https://example.com/external_url',
         'content' => 'Test content',
         'source' => '',
         'published_at' => now(),
@@ -166,7 +164,7 @@ test('handles article with no author', function (): void {
     $this->newsSources->addSource($source);
     $this->newsSources->sync();
 
-    $article = Article::where('external_url', 'https://example.com/test')->first();
+    $article = Article::where('external_url', 'https://example.com/external_url')->first();
 
     expect($article)->not->toBeNull()
         ->and($article->authors)->toBeEmpty();
@@ -187,7 +185,7 @@ test('handles empty response from news sources', function (): void {
 test('handles malformed author strings', function (): void {
     $articleData = ArticleDTO::from([
         'title' => 'Test Article',
-        'external_url' => 'https://example.com/test',
+        'external_url' => 'https://example.com/external_url',
         'content' => 'Test content',
         'source' => '',
         'published_at' => now(),
@@ -202,7 +200,7 @@ test('handles malformed author strings', function (): void {
     $this->newsSources->addSource($source);
     $this->newsSources->sync();
 
-    $article = Article::where('external_url', 'https://example.com/test')->first();
+    $article = Article::where('external_url', 'https://example.com/external_url')->first();
     expect($article->authors)->toHaveCount(2)
         ->and($article->authors->pluck('name')->toArray())->toContain('Jan Felix', 'Abdullahi Abu');
 });
