@@ -39,13 +39,13 @@ class NewYorkTimeSource extends NewsAbstract
 
     public function mapCallback(): \Closure
     {
-        return fn ($data) => ArticleDTO::from([
+        return fn ($data): ArticleDTO => ArticleDTO::from([
             'title' => Arr::get($data, 'headline.main'),
             'description' => Arr::get($data, 'snippet'),
             'content' => Arr::get($data, 'abstract'),
             'author' => Arr::get($data, 'byline.original'),
             'category' => Arr::get($data, 'section_name'),
-            'source' => $this->__toString(),
+            'source' => $this->__toString().'- '.Arr::get($data, 'source'),
             'image_url' => Arr::get($data, 'multimedia.default.url'),
             'external_url' => Arr::get($data, 'web_url'),
             'published_at' => CarbonImmutable::parse(Arr::get($data, 'pub_date')),

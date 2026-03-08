@@ -21,7 +21,7 @@ class GetArticlesAction
         $cacheKey = $this->cacheKey($query);
         $paginate = Cache::tags([Article::CACHE_KEY])->flexible($cacheKey,
             [200, 400],
-            fn () => $this->buildQuery());
+            fn (): CursorPaginator => $this->buildQuery());
 
         return ArticleDTO::collect($paginate);
     }

@@ -15,13 +15,13 @@ class ArticleFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => $this->faker->sentence(),
-            'description' => $this->faker->paragraph(),
-            'content' => $this->faker->paragraph(),
-            'image_url' => $this->faker->imageUrl(),
-            'external_url' => $this->faker->url(),
-            'source' => $this->faker->randomElement(['NewsAPI', 'The Guardian']),
-            'published_at' => $this->faker->date(),
+            'title' => fake()->sentence(),
+            'description' => fake()->paragraph(),
+            'content' => fake()->paragraph(),
+            'image_url' => fake()->imageUrl(),
+            'external_url' => fake()->url(),
+            'source' => fake()->randomElement(['NewsAPI', 'The Guardian']),
+            'published_at' => fake()->date(),
         ];
     }
 }

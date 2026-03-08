@@ -24,7 +24,7 @@ afterEach(function (): void {
 test('fetch:news command is scheduled to run every 30 minutes', function (): void {
     $schedule = app()->make(Schedule::class);
 
-    $scheduledCommand = collect($schedule->events())->first(fn (Event $event) => str_contains($event->command, 'fetch:news'));
+    $scheduledCommand = collect($schedule->events())->first(fn (Event $event): bool => str_contains($event->command, 'fetch:news'));
 
     expect($scheduledCommand)->not->toBeNull()
         ->and($scheduledCommand->expression)->toBe('*/30 * * * *');
@@ -82,7 +82,7 @@ test('command successfully fetches and stores news articles', function (): void 
     ]);
 });
 
-test('command throws when API errors', function () {
+test('command throws when API errors', function (): void {
 
     Http::fake([
         'newsapi.org/*' => Http::response(

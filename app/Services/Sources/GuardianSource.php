@@ -40,7 +40,7 @@ class GuardianSource extends NewsAbstract
 
     public function mapCallback(): \Closure
     {
-        return fn ($data) => ArticleDTO::from([
+        return fn ($data): ArticleDTO => ArticleDTO::from([
             'title' => Arr::get($data, 'webTitle'),
             'description' => Arr::get($data, 'fields.bodyText'),
             'content' => Arr::get($data, 'content'),

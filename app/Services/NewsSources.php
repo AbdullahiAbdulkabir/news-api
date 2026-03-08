@@ -38,7 +38,7 @@ readonly class NewsSources
     public function sync(?string $specificSource = null): void
     {
         $this->sources->when($specificSource,
-            fn ($s) => $s->filter(fn ($s) => $s->__toString() === $specificSource))
+            fn ($s) => $s->filter(fn ($s): bool => strtolower($s->__toString()) === strtolower($specificSource)))
             ->each(function (NewsInterface $source): void {
                 $data = $source->fetchArticles();
                 $data->chunk(100)->each(function (Collection $articles): void {
@@ -88,8 +88,8 @@ readonly class NewsSources
     {
         $categories = $data
             ->pluck('category')->filter()
-            ->flatMap(fn ($category) => explode(',', $category))
-            ->map(fn ($category) => trim($category))->filter()->unique()
+            ->flatMap(fn ($category): array => explode(',', $category))
+            ->map(fn ($category): string => trim($category))->filter()->unique()
             ->values();
 
         if ($categories->isEmpty()) {
@@ -117,8 +117,8 @@ readonly class NewsSources
     {
         $authors = $data
             ->pluck('author')->filter()
-            ->flatMap(fn ($author) => explode(',', $author))
-            ->map(fn ($author) => trim($author))->filter()->unique()
+            ->flatMap(fn ($author): array => explode(',', $author))
+            ->map(fn ($author): string => trim($author))->filter()->unique()
             ->values();
 
         if ($authors->isEmpty()) {
@@ -157,10 +157,10 @@ readonly class NewsSources
                 }
 
                 $categoryNames = collect(explode(',', $article->category))
-                    ->map(fn ($name) => trim($name));
+                    ->map(fn ($name): string => trim($name));
 
                 return collect($categoryNames)
-                    ->map(function ($name) use ($savedArticle, $categories) {
+                    ->map(function ($name) use ($savedArticle, $categories): ?array {
 
                         $category = $categories->get($name);
 
@@ -203,7 +203,7 @@ readonly class NewsSources
                     ->map('trim')
                     ->filter();
 
-                return $authorNames->map(function ($name) use ($savedArticle, $authors) {
+                return $authorNames->map(function ($name) use ($savedArticle, $authors): ?array {
                     $author = $authors->get($name);
 
                     if (! $author) {

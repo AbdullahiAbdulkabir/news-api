@@ -23,7 +23,7 @@ class Article extends Model
     ];
 
     /**
-     * @return BelongsToMany<Author, $this>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\App\Models\Author, $this>
      */
     public function authors(): BelongsToMany
     {
@@ -34,7 +34,7 @@ class Article extends Model
     }
 
     /**
-     * @return BelongsToMany<Category, $this>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\App\Models\Category, $this>
      */
     public function categories(): BelongsToMany
     {
@@ -44,6 +44,7 @@ class Article extends Model
         )->withTimestamps();
     }
 
+    #[\Override]
     protected function casts(): array
     {
         return [

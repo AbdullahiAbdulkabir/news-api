@@ -31,7 +31,7 @@ class FetchNewsCommand extends Command
         $availableSources = $newsSources->sources;
 
         if ($specificSource) {
-            $availableSources = $availableSources->filter(fn ($source) => $source->__toString() === $specificSource);
+            $availableSources = $availableSources->filter(fn ($source): bool => strtolower($source->__toString()) === strtolower($specificSource));
 
             if ($availableSources->isEmpty()) {
                 $this->error("{$specificSource} not available");

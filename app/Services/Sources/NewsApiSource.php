@@ -49,13 +49,13 @@ class NewsApiSource extends NewsAbstract
     {
         $sources = $this->sources();
 
-        return fn ($data) => ArticleDTO::from([
+        return fn ($data): \App\DTOs\ArticleDTO => ArticleDTO::from([
             'title' => Arr::get($data, 'title'),
             'description' => Arr::get($data, 'description'),
             'content' => Arr::get($data, 'content'),
             'author' => Arr::get($data, 'author'),
             'category' => Arr::get($sources->firstWhere('name', Arr::get($data, 'source.name')), 'category'),
-            'source' => $this->__toString(),
+            'source' => $this->__toString().'- '.Arr::get($data, 'source.name'),
             'image_url' => Arr::get($data, 'urlToImage'),
             'external_url' => Arr::get($data, 'url'),
             'published_at' => CarbonImmutable::parse(Arr::get($data, 'publishedAt')),
