@@ -10,18 +10,11 @@ use Illuminate\Support\ServiceProvider;
 
 class NewsSourceServiceProvider extends ServiceProvider
 {
-    /**
-     * Register services.
-     */
-    #[\Override]
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap services.
-     */
     public function boot(): void
     {
         $this->app->singleton(NewsSources::class, function () {
